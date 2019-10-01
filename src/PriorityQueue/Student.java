@@ -5,15 +5,20 @@ public class Student implements Comparable<Student> {
     private Integer marks;
 
     public Student(String trim, int parseInt) {
+        this.name = trim;
+        this.marks = parseInt;
     }
-
 
     @Override
     public int compareTo(Student student) {
-        return 0;
+        return this.marks - student.marks;
     }
 
     public String getName() {
         return name;
+    }
+
+    public String toString() {
+        return "Student{name='" + name + "', marks=" + this.marks + "}";
     }
 }
