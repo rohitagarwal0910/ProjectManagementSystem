@@ -8,7 +8,7 @@ public class RBTree<T extends Comparable, E> implements RBTreeInterface<T, E> {
             root = new RedBlackNode<T, E>(key, value);
             root.b = true;
             return;
-        } else
+        } else {
             while (true) {
                 if (key.compareTo(cn.key) < 0) {
                     if (cn.left.key == null) {
@@ -33,6 +33,7 @@ public class RBTree<T extends Comparable, E> implements RBTreeInterface<T, E> {
                         cn = cn.right;
                 }
             }
+        }
         balance(cn);
     }
 
@@ -41,24 +42,24 @@ public class RBTree<T extends Comparable, E> implements RBTreeInterface<T, E> {
             cn.b = true;
             return;
         }
-        if (cn.parent.b == true)
+        if (cn.parent.b == true) {
             return;
+        }
         boolean l = false;
         if (cn.parent.parent.left == cn.parent)
-            l = true;
-        if (l && cn.parent.parent.right.b == false) {
+            {l = true;}
+        if (l && cn.parent.parent.right.key != null && cn.parent.parent.right.b == false) {
             cn.parent.b = true;
             cn.parent.parent.b = false;
             cn.parent.parent.right.b = true;
             balance(cn.parent.parent);
-        } else if (!l && cn.parent.parent.left.b == false) {
+        } else if (!l && cn.parent.parent.left.key != null && cn.parent.parent.left.b == false) {
             cn.parent.b = true;
             cn.parent.parent.b = false;
             cn.parent.parent.left.b = true;
             balance(cn.parent.parent);
         }
-
-        else if (l && cn.parent.parent.right.b == true) {
+        else if(l){
             if (cn == cn.parent.left) {
                 cn.parent.b = true;
                 cn.parent.parent.b = false;
@@ -69,7 +70,7 @@ public class RBTree<T extends Comparable, E> implements RBTreeInterface<T, E> {
                 rotateLeft(cn.right);
                 rotateRight(cn.left);
             }
-        } else if (!l && cn.parent.parent.right.b == true) {
+        } else if (!l) {
             if (cn == cn.parent.right) {
                 cn.parent.b = true;
                 cn.parent.parent.b = false;
@@ -93,13 +94,15 @@ public class RBTree<T extends Comparable, E> implements RBTreeInterface<T, E> {
             l = true;
         p.right.parent = gp;
         gp.left = p.right;
-        p.left = gp;
+        p.right = gp;
         gp.parent = p;
         if (ggp != null && l)
             ggp.left = p;
         else if (ggp != null)
             ggp.right = p;
         p.parent = ggp;
+        if (ggp == null)
+            root = p;
     }
 
     void rotateLeft(RedBlackNode<T, E> cn) {
@@ -111,13 +114,15 @@ public class RBTree<T extends Comparable, E> implements RBTreeInterface<T, E> {
             l = true;
         p.left.parent = gp;
         gp.right = p.left;
-        p.right = gp;
+        p.left = gp;
         gp.parent = p;
         if (ggp != null && l)
             ggp.left = p;
         else if (ggp != null)
             ggp.right = p;
         p.parent = ggp;
+        if (ggp == null)
+            root = p;
     }
 
     @Override

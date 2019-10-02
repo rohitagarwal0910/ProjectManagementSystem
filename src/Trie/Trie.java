@@ -8,26 +8,33 @@ public class Trie<T> implements TrieInterface {
     @Override
     public boolean delete(String word) {
         TrieNode<T> cn = root;
-        TrieNode<T> last = new TrieNode<T>();
+        TrieNode<T> temp = new TrieNode<T>();
+        TrieNode<T> last = temp;
         int td = 0;
-        boolean t = false;
         for (int i = 0; i < word.length(); i++) {
             if (cn.branches[word.charAt(i) - 32] == null) {
                 return false;
             }
-            if(cn.branches[word.charAt(i) - 32].children <= 1 && t == false){
+            if (cn.branches[word.charAt(i) - 32].children <= 1 && !cn.branches[word.charAt(i) - 32].isEnd
+                    && last == temp) {
                 last = cn;
                 td = word.charAt(i) - 32;
-                t = true;
             }
-            if(cn.branches[word.charAt(i) - 32].children > 1) {t=false;}
+            if (cn.branches[word.charAt(i) - 32].children > 1 || (cn.branches[word.charAt(i) - 32].isEnd && cn.branches[word.charAt(i) - 32].children != 0)) {
+                last = temp;
+            }
+            if (cn.branches[word.charAt(i) - 32].children == 0 && last == temp) {
+                last = cn;
+                td = word.charAt(i) - 32;
+            }
             cn = cn.branches[word.charAt(i) - 32];
         }
         if (cn.isEnd == true) {
             cn.isEnd = false;
             cn.value = null;
-            if(cn.children == 0){
+            if (cn.children == 0) {
                 last.branches[td] = null;
+                last.children -= 1;
             }
             return true;
         } else
@@ -79,7 +86,6 @@ public class Trie<T> implements TrieInterface {
             if (cn.branches[word.charAt(i) - 32] == null) {
                 cn.branches[word.charAt(i) - 32] = new TrieNode<T>();
                 cn.children += 1;
-                // cn.branches[word.charAt(i) - 32].key = word.charAt(word.charAt(i));
             }
             cn = cn.branches[word.charAt(i) - 32];
         }
@@ -109,19 +115,7 @@ public class Trie<T> implements TrieInterface {
     }
 
     public void sortAndPrint(ArrayList<Character> list, int level) {
-        while (true) {
-            boolean b = false;
-            for (int i = 0; i < list.size() - 1; i++) {
-                if (list.get(i + 1).compareTo(list.get(i)) < 0) {
-                    b = true;
-                    char c = list.get(i + 1);
-                    list.set(i + 1, list.get(i));
-                    list.set(i, c);
-                }
-            }
-            if (b == false)
-                break;
-        }
+        list.sort(null);
         System.out.print("Level " + level + ": ");
         if (list.size() > 0)
             System.out.print(list.get(0));
@@ -136,7 +130,6 @@ public class Trie<T> implements TrieInterface {
         printLevelResult.clear();
         printLevel_(level, root);
         sortAndPrint(printLevelResult, level);
-        
     }
 
     public void print_(int level, ArrayList<TrieNode<T>> list) {
@@ -145,14 +138,15 @@ public class Trie<T> implements TrieInterface {
         for (int i = 0; i < list.size(); i++) {
             for (int j = 0; j < list.get(i).branches.length; j++) {
                 if (list.get(i).branches[j] != null) {
-                    if ((char) j+32 != ' ') clist.add((char) (j + 32));
+                    if ((char) j + 32 != ' ')
+                        clist.add((char) (j + 32));
                     nlist.add(list.get(i).branches[j]);
                 }
             }
         }
         sortAndPrint(clist, level);
-        if (nlist.isEmpty() == false){
-            print_(level+1, nlist);
+        if (nlist.isEmpty() == false) {
+            print_(level + 1, nlist);
         }
     }
 

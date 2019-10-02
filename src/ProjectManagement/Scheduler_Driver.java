@@ -27,7 +27,7 @@ public class Scheduler_Driver extends Thread implements SchedulerInterface {
 
         File file;
         if (args.length == 0) {
-            URL url = PriorityQueueDriverCode.class.getResource("INP");
+            URL url = Scheduler_Driver.class.getResource("INP");
             file = new File(url.getPath());
         } else {
             file = new File(args[0]);
@@ -155,11 +155,12 @@ public class Scheduler_Driver extends Thread implements SchedulerInterface {
         System.out.println("ADDING Budget");
         TrieNode project = projects.search(cmd[1]);
         if (project == null) {
-            System.out.println("NO SUCH PROJECT");
+            System.out.println("No such project exists. " + cmd[1]);
             return;
         }
         ((Project) project.getValue()).budget += Integer.parseInt(cmd[2]);
         RedBlackNode r = jobsLeft.search(cmd[1]);
+        if(r.key == null) return;
         List<Job> toAdd = r.getValues();
         for(int i = 0; i < toAdd.size(); i++){
             jobs.insert(toAdd.get(i));
